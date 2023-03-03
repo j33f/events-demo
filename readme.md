@@ -44,17 +44,19 @@ To do so, whe can do something like this:
 ```js
 // Gertrude component
 gertrude.onclick = () => {
-  // Emit the event
-  eventEmitter.emit('gertrude-clicked', { name: 'Gertrude' })
+  // Emit the global event when clicked
+  eventEmitter.emit('gertrude-clicked', { name: 'Gertrude' });
 }
 eventEmitter.on('gertrude-clicked', (payload) => {
-  console.log(`ME was clicked!`)
+  // Gertrude handle the global event
+  console.log(`ME was clicked!`);
 })
 
 // Gontrand component
 eventEmitter.on('gertrude-clicked', (payload) => {
-  console.log(`${payload.name} (certainly Gertrude) was clicked!`)
-  console.log(`I'm Gontrand, I'm listening to Gertrude clicks, and this is my "this":`, this)
+  // Gontrand handle the global event emitted by Gertrude when clicked
+  console.log(`${payload.name} (certainly Gertrude) was clicked!`);
+  console.log(`I'm Gontrand, I'm listening to Gertrude clicks, and this is my "this":`, this);
 })
 ```
 
@@ -67,17 +69,18 @@ This way is less usable as the event have not the same handling process for each
 ```js
 // Gertrude component
 gertrude.onclick = () => {
-  // Handle the event
-  console.log(`OMG ME was clicked! and this is my HTML element this:`, this)
+  // Handle the onclick event
+  console.log(`OMG ME was clicked! and this is my HTML element this:`, this);
 
-  // Emit the event
-  eventEmitter.emit('gertrude-clicked', { name: 'Gertrude' })
+  // Emit another event for the others through the global event emitter
+  eventEmitter.emit('gertrude-clicked', { name: 'Gertrude' });
 }
 // Here Gertrude is not listening to the event, she is just emitting it
 
 // Gontrand component
 eventEmitter.on('gertrude-clicked', (payload) => {
-  console.log(`${payload.name} (certainly Gertrude) was clicked!`)
+  // Gontrand handle the global event emitted by Gertrude when clicked
+  console.log(`${payload.name} (certainly Gertrude) was clicked!`);
 })
 ```
 
@@ -91,7 +94,8 @@ Here the context is totally different. Gertrude is not emitting an event, she is
 // Gontrand component
 const gertrude = document.querySelector('#gertrude');
 gertrude.onclick = () => {
-  console.log(`OMG Gertrude was clicked! (Gontrand told me to say it for him but he'll never know I did it) this "this" is my HTML element this:`, this)
+  // Gontrand tells Gertrude to do something when she is clicked
+  console.log(`OMG Gertrude was clicked! (Gontrand told me to say it for him but he'll never know I did it) this "this" is my HTML element this:`, this);
 }
 // here, Gertrude is not emitting a thing, Gontrand told her to do something when she is clicked. Slash dot.
 ```
