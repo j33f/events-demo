@@ -43,8 +43,6 @@ To do so, whe can do something like this:
 
 ```js
 // Gertrude component
-const eventEmitter = new EventEmitter();
-const gertrude = document.querySelector('#gertrude')
 gertrude.onclick = () => {
   // Emit the event
   eventEmitter.emit('gertrude-clicked', { name: 'Gertrude' })
@@ -54,14 +52,10 @@ eventEmitter.on('gertrude-clicked', (payload) => {
 })
 
 // Gontrand component
-const gontrand = document.querySelector('#gontrand')
-gontrand.onclick = () => {
-  // Listen to the event
-  eventEmitter.on('gertrude-clicked', (payload) => {
-    console.log(`${payload.name} (certainly Gertrude) was clicked!`)
-    console.log(`I'm Gontrand, I'm listening to Gertrude clicks, and this is my "this":`, this)
-  })
-}
+eventEmitter.on('gertrude-clicked', (payload) => {
+  console.log(`${payload.name} (certainly Gertrude) was clicked!`)
+  console.log(`I'm Gontrand, I'm listening to Gertrude clicks, and this is my "this":`, this)
+})
 ```
 
 ### The "handle and emit" way
@@ -72,8 +66,6 @@ This way is less usable as the event have not the same handling process for each
 
 ```js
 // Gertrude component
-const eventEmitter = new EventEmitter();
-const gertrude = document.querySelector('#gertrude')
 gertrude.onclick = () => {
   // Handle the event
   console.log(`OMG ME was clicked! and this is my HTML element this:`, this)
@@ -81,15 +73,12 @@ gertrude.onclick = () => {
   // Emit the event
   eventEmitter.emit('gertrude-clicked', { name: 'Gertrude' })
 }
+// Here Gertrude is not listening to the event, she is just emitting it
 
 // Gontrand component
-const gontrand = document.querySelector('#gontrand')
-gontrand.onclick = () => {
-  // Listen to the event
-  eventEmitter.on('gertrude-clicked', (payload) => {
-    console.log(`${payload.name} (certainly Gertrude) was clicked!`)
-  })
-}
+eventEmitter.on('gertrude-clicked', (payload) => {
+  console.log(`${payload.name} (certainly Gertrude) was clicked!`)
+})
 ```
 
 ### The "tell me when you are clicked" way
@@ -104,13 +93,14 @@ const gertrude = document.querySelector('#gertrude');
 gertrude.onclick = () => {
   console.log(`OMG Gertrude was clicked! (Gontrand told me to say it for him but he'll never know I did it) this "this" is my HTML element this:`, this)
 }
+// here, Gertrude is not emitting a thing, Gontrand told her to do something when she is clicked. Slash dot.
 ```
 
 ## Conclusion
 
 When we want to handle an event we have to:
 
-  1. know its name
+  1. know its name in any proper way
   2. listen to it through the global event emitter (register a listener)
   3. handle it
   4. unregister the listener when we don't want to handle it anymore (optional)
