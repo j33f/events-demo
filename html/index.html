@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My First Web Page</title>
+    <script type="module">
+      import EventEmitter from "./js/EventEmitter.class.js";
+      import Page from "./js/Page.class.js";
+
+      let times = 0;
+      let secondTimes = 0;
+      const globalEventEmitter = new EventEmitter();
+      globalThis.eventEmitter = globalEventEmitter;
+
+      const page = new Page({ title: "Events Example", html: "<p>Events example.</p>" }, globalEventEmitter);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        page.render();
+
+        const firstButtonClickHandler = (e) => {
+          times++;
+          firstButton.element.innerHTML = `You clicked me ${times} times!`;
+        };
+        const firstButton = page.addComponent({
+          type: "button",
+          html: "Click Me",
+          onClick: firstButtonClickHandler,
+        });
+
+        const secondButtonClickHandler = (e) =>
+          console.log(
+            `You clicked the second button ${secondTimes} times yet! (this comes from the "onclick" handler)`
+          );
+        const secondButton = page.addComponent({
+          id: "second",
+          type: "button",
+          html: "Click Me TOO!",
+          onClick: secondButtonClickHandler,
+        });
+
+        page.addComponent({
+          type: "div",
+          id: "output",
+          html: "...",
+        });
+
+        // event listener, listening for the first button to be clicked
+        page.eventEmitter.on(`${firstButton.id}:onClick`, (e) => {
+          document.getElementById(
+            "output"
+          ).innerHTML = `You clicked the first button ${times} times!<br /><br />(the first button have received the order to handle the click event by itself but here, I'm listening for the first button to be clicked through the gobal event emitter)`;
+        });
+
+        // event listener, listening for the second button to be clicked
+        page.eventEmitter.on("second:onClick", (e) => {
+          secondTimes++;
+          console.log(
+            "the counter is now: ",
+            secondTimes,
+            "(this comes from the event listener which increments the counter)"
+          );
+          document.getElementById(
+            "output"
+          ).innerHTML = `You clicked the second button ${secondTimes} times!<br /><br />(I know that because I'm listening for the second button to be clicked)`;
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>My First Web Page</h1>
+    <p>My first paragraph.</p>
+  </body>
+</html>
