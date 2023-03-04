@@ -16,15 +16,6 @@ class Page extends Component {
   render() {
     console.log(this);
     this.parent.innerHTML = this.html || this.parent.innerHTML;
-
-    Object.keys(this.properties).forEach(key => {
-      if (typeof this.properties[key] === 'function') {
-        this.eventEmitter.on(`${this.id}:${key}`, this.properties[key]);
-        this.parent[key.toLowerCase()] = (e) => this.eventEmitter.emit(`${this.id}:${key}`, e);
-      } else {
-        this.parent[key.toLowerCase()] = JSON.stringify(this.properties[key]);
-      }
-    });
   }
 
   addComponent(componentProperties) {
