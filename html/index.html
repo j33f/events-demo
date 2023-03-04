@@ -6,45 +6,68 @@
       import EventEmitter from "./js/EventEmitter.class.js";
       import Page from "./js/Page.class.js";
 
+      // those are just for the example, counters for the buttons
       let times = 0;
       let secondTimes = 0;
+
+      // global event emitter
       const globalEventEmitter = new EventEmitter();
       globalThis.eventEmitter = globalEventEmitter;
 
+      // create a new page and pass the global event emitter to it
       const page = new Page({ title: "Events Example", html: "<p>Events example.</p>" }, globalEventEmitter);
 
+      // when the page is ready, render it and add some components
       document.addEventListener("DOMContentLoaded", () => {
         page.render();
 
+        /**
+         * add a button component with a click handler
+         */
         const firstButtonClickHandler = (e) => {
           times++;
           firstButton.element.innerHTML = `You clicked me ${times} times!`;
         };
+        // add the button component to the page
         const firstButton = page.addComponent({
+          // this component will have a generated id (see below)
           type: "button",
           html: "Click Me",
           onClick: firstButtonClickHandler,
         });
 
+        /**
+         * add a second button component with another click handler
+         */
         const secondButtonClickHandler = (e) =>
           console.log(
             `You clicked the second button ${secondTimes} times yet! (this comes from the "onclick" handler)`
           );
+
+        // add the second button component to the page
         const secondButton = page.addComponent({
-          id: "second",
+          id: "second", // this component have an id (see below)
           type: "button",
           html: "Click Me TOO!",
           onClick: secondButtonClickHandler,
         });
 
+        /**
+         * add a div component
+         */
         page.addComponent({
           type: "div",
           id: "output",
           html: "...",
         });
 
+        /**
+         * add some event listeners to the global event emitter
+         */
+
         // event listener, listening for the first button to be clicked
         page.eventEmitter.on(`${firstButton.id}:onClick`, (e) => {
+          // we dont know the id of the first button, so we use the id of the component object
           document.getElementById(
             "output"
           ).innerHTML = `You clicked the first button ${times} times!<br /><br />(the first button have received the order to handle the click event by itself but here, I'm listening for the first button to be clicked through the gobal event emitter)`;
@@ -52,6 +75,7 @@
 
         // event listener, listening for the second button to be clicked
         page.eventEmitter.on("second:onClick", (e) => {
+          // we know the id of the second button, so we use it directly
           secondTimes++;
           console.log(
             "the counter is now: ",
@@ -66,7 +90,8 @@
     </script>
   </head>
   <body>
-    <h1>My First Web Page</h1>
+    <!-- this is the default page body -->
+    <h1>My Default Content</h1>
     <p>My first paragraph.</p>
   </body>
 </html>
